@@ -129,6 +129,15 @@ class Manager:
         Returns:
             float: Total costs for the apartment, or None if the apartment key does not exist.
 
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> manager.get_apartment_costs("APT001")
+            5000.0
+            >>> manager.get_apartment_costs("APT001", year=2023)
+            2500.0
+            >>> manager.get_apartment_costs("APT001", year=2023, month=3)
+            450.50
+
         """
         if month is not None and (month < 1 or month > 12):
             raise ValueError("Month must be between 1 and 12")
@@ -150,7 +159,17 @@ class Manager:
         year: int,
         month: int,
     ) -> ApartmentSettlement | None:
-        """Get the apartment settlement for a given apartment key, year, and month."""
+        """Get the apartment settlement for a given apartment key, year, and month.
+
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> settlement = manager.get_settlement("APT002", 2023, 6)
+            >>> settlement.key
+            "APT002-2023-6"
+            >>> settlement.total_due_pln
+            1200.75
+
+        """
         if month < 1 or month > 12:
             raise ValueError("Month must be between 1 and 12")
         if apartment_key not in self.apartments:
@@ -197,7 +216,16 @@ class Manager:
         ]
 
     def get_debtors(self, apartment_key: str, year: int, month: int) -> list[str]:
-        """Get a list of tenant names (debtors) for a given apartment key, year, and month."""
+        """Get a list of tenant names (debtors) for a given apartment key, year, and month.
+
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> manager.get_debtors("APT001", 2023, 5)
+            ["Jan Kowalski", "Anna Nowak"]
+            >>> manager.get_debtors("APT003", 2023, 3)
+            []
+
+        """
         if month < 1 or month > 12:
             raise ValueError("Month must be between 1 and 12")
         output = []
@@ -223,7 +251,16 @@ class Manager:
         return output
 
     def calculate_tax(self, year: int, month: int, tax_rate: float) -> float:
-        """Calculate the tax amount based on the total income from transfers."""
+        """Calculate the tax amount based on the total income from transfers.
+
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> manager.calculate_tax(2023, 6, tax_rate=0.19)
+            570.0
+            >>> manager.calculate_tax(2023, 12, tax_rate=0.23)
+            1035.0
+
+        """
         total_income = sum(
             transfer.amount_pln
             for transfer in self.transfers
@@ -249,9 +286,12 @@ class Manager:
     def get_annual_balance(self, year: int) -> float:
         """Calculate the annual balance for a given year based on transfers and bills.
 
-        >>> manager = Manager()
-
-        >>> manager.calculate_annual_balance(year=2023)
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> manager.get_annual_balance(year=2023)
+            8500.50
+            >>> manager.get_annual_balance(year=2024)
+            -2300.0
 
         """
         total_income = sum(
@@ -289,7 +329,16 @@ class Manager:
         return True
 
     def check_tenant_blacklist(self, tenant_name: str) -> bool:
-        """Check if a tenant is in the blacklist."""
+        """Check if a tenant is in the blacklist.
+
+        Examples:
+            >>> manager = Manager(parameters)
+            >>> manager.check_tenant_blacklist("Piotr Lewandowski")
+            True
+            >>> manager.check_tenant_blacklist("Ewa Malinowska")
+            False
+
+        """
         return any(
             entry for entry in self.tenants_blacklist if entry.tenant == tenant_name
         )
