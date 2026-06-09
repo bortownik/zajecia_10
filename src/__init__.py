@@ -46,4 +46,6 @@ Authors
 ------
 Łukasz Kułacz - initial implementation, testing, documentation
 
+Borys Kaczmarek - refactoring, bug fixes, performance improvements
+
 """
